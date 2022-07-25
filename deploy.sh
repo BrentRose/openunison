@@ -160,8 +160,22 @@ else
   echo ou-tls-certificate secret already exists... skipping
 fi
 
+# Update coredns configmap to include hosts entries that will resolve lookups internal to k8s, for the
+# k8sou and k8sdb to the IP address of the ingress-nginx-controller service.
+# Patch the coredns configmap (instead of manual kubectl edit configmaps -n kube-system coredns)
+
+# Get the IP for the svc
 ingress_svc=$(kubectl get service -n ingress-nginx ingress-nginx-controller -o json | jq -r '.spec.clusterIP')
-#kubectl edit configmaps -n kube-system coredns
+# Get the initial corefile
+corefile=$(kubectl get configmaps -n kube-system coredns -o json | jq -r .data.Corefile)
+# Update $corefile with the dns entries
+corefile=$(sed "/hosts/a\\
+       $ingress_svc k8sdb.local.dev
+" <<< "$corefile")
+
+corefile=$(sed "/hosts/a\\
+       $ingress_svc k8sou.local.dev
+" <<< "$corefile")
 
 ./ouctl install-auth-portal values.yaml
 
