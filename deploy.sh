@@ -166,19 +166,20 @@ fi
 
 # Get the IP for the svc
 ingress_svc=$(kubectl get service -n ingress-nginx ingress-nginx-controller -o json | jq -r '.spec.clusterIP')
-# Get the initial corefile
-corefile=$(kubectl get configmaps -n kube-system coredns -o json | jq -r .data.Corefile)
-# Update $corefile with the dns entries
-corefile=$(sed "/hosts/a\\
-       $ingress_svc k8sdb.local.dev
-" <<< "$corefile")
+# Get the existing coredns config map
+kubectl get configmaps -n kube-system coredns -o yaml > ./coredns_cm.yaml
+# Insert host entries in the config file
+sed -i "" "/hosts/a\\
+           $ingress_svc k8sdb.local.dev
+" coredns_cm.yaml
+sed -i "" "/hosts/a\\
+           $ingress_svc k8sou.local.dev
+" coredns_cm.yaml
+# Patch the existing coredns configmap
+kubectl patch --type=merge -n kube-system configmap coredns --patch-file coredns_cm.yaml
 
-corefile=$(sed "/hosts/a\\
-       $ingress_svc k8sou.local.dev
-" <<< "$corefile")
-
+# Deploy the Openunison components
 ./ouctl install-auth-portal values.yaml
-
 # Create role bindings (1 restricted and 1 admin)
 
 # Display the xml metadata on the screen

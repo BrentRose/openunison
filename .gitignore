@@ -3,4 +3,4 @@ certs/
 openunison-default.yaml
 ouctl
 values.yaml
-coredns_cm
+coredns_cm.yaml
