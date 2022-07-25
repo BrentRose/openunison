@@ -90,7 +90,7 @@ else
     --extra-config=apiserver.oidc-username-claim=sub \
     --extra-config=apiserver.oidc-groups-claim=groups \
     --extra-config=apiserver.oidc-username-prefix=oidc: \
-    --extra-config=apiserver.oidc-ca-file=/etc/ssl/certs/cacert.pem \
+    --extra-config=apiserver.oidc-ca-file=/etc/ssl/certs/RootCA.pem \
     --embed-certs
     minikube addons enable ingress
   fi
