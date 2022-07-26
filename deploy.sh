@@ -181,6 +181,7 @@ kubectl patch --type=merge -n kube-system configmap coredns --patch-file coredns
 # Deploy the Openunison components
 ./ouctl install-auth-portal values.yaml
 # Create role bindings (1 restricted and 1 admin)
+kubectl create clusterrolebinding brose-admin --clusterrole=cluster-admin --user=oidc:brose
 
 # Display the xml metadata on the screen
 echo; echo
