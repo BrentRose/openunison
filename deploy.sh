@@ -50,7 +50,7 @@ else
   echo "ou.pem already exists... skipping"
 fi
 
-# Validate the gluu/CA
+# Validate the openunison/CA certs
 #TODO
 
 # Create chain.pem
